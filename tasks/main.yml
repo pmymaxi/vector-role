@@ -1,0 +1,34 @@
+---
+- name: Block vector deploy
+  block:
+    - name: Get repo vector
+      tags:
+        - vectoraddrepo
+      ansible.builtin.get_url:
+        url: "{{ vector_repo_url }}.{{ vector_repo_arch }}.rpm"
+        dest: "{{ vector_repo_dest }}"
+        mode: "{{ vector_dir_mod }}"
+        timeout: "{{ vector_timeout }}"
+    - name: Install vector
+      tags:
+        - vectorinstall
+      ansible.builtin.dnf:
+        name: "{{ vector_dnf_repo_name }}"
+        state: "{{ vector_dnf_state }}"
+        disable_gpg_check: "{{ vector_dnf_gpg_check }}"
+    - name: Past templates vector
+      tags:
+        - vectorsetconf
+      ansible.builtin.template:
+        src: "{{ vector_template_src }}"
+        dest: "{{ vector_conf_dest }}"
+        mode: "{{ vector_template_mode }}"
+      notify: Start vector
+    - name: Wait access port clickhouse
+      tags:
+        - checkconnectdb
+      ansible.builtin.wait_for:
+        port: "{{ vector_clickhouse_http_port }}"
+        host: "{{ vector_clickhouse_http_host }}"
+        delay: "{{ vector_clickhouse_http_delay }}"
+        timeout: "{{ vector_clickhouse_http_timeout }}"

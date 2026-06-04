@@ -1,0 +1,14 @@
+---
+vector_repo_dest: "/tmp/vector.rpm"
+vector_dir_mod: "0755"
+vector_timeout: 30
+
+vector_dnf_repo_name: "/tmp/vector.rpm"
+vector_dnf_state: "present"
+vector_dnf_gpg_check: true
+
+vector_template_src: "templates/vector.yaml.j2"
+vector_template_mode: "0644"
+
+vector_clickhouse_http_delay: 2
+vector_clickhouse_http_timeout: 30
