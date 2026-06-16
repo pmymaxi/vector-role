@@ -22,16 +22,94 @@ Role Variables
 |  `vector_clickhouse_http_port` | HTTP порт clickhouse службы            | `8123`                        |
 |  `vector_clickhouse_db_name`   | Имя БД на clickhouse                   | `nginx`                       |
 |  `vector_clickhouse_table_name`| Имя таблицы в БД clickhouse            | `my_access_logs`              |
+|  `vector_start_systemd`        | Параметр применения systemd в системе  | `true`                        |
+|  `vector_check_service`        | Параметр доступности clickhouse-server | `true`                        |
 
+vector_check_service - при использовании данного параметра как true, необходимо наличие уже подготовленного clickhouse-server с возможностью авторизации, можно использовать готовый официальный docker образ "clickhouse/clickhouse-server:latest, см. раздел Tox. Он проверяет доступность clickhouse-server ```curl <IP>:8123```
+vector_start_systemd - параметр используется для определения запуска Vector, true - управление через systemd, false - shell запуск.
+
+Environment
+----------------
+При формировании конфигурационного файла Vector через шаблон vector.yaml.j2, используется переменные из переменного окружения.
+```yml
+user: ${CLICKHOUSE_USER}
+password: ${CLICKHOUSE_PASSWORD}
+```
+Это необходимо в случаи правил авторизации на clickhouse-server. Перед началом применения данной роли необходимо, определить переменные в переменном окружении.
+```bash
+export CLICKHOUSE_USER="<пользователь clickhouse-server>"
+export CLICKHOUSE_PASSWORD="<пароль clickhouse-server>" 
+```
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
     - hosts: servers
       roles:
          - { role: vector }
+
+Molecule
+-------
+Molecule выполняет тестирование deploy Vector с использованием Docker.
+
+Vector разворачивается на 3-х images:
+  - name: molecule-netology
+    image: rockylinux:9
+  - name: molecule-oracle
+    image: oraclelinux:9
+  - name: molecule-ubuntu
+    image: ubuntu:latest  
+
+Выполняет следующие сценария:
+scenario:
+  name: default
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - idempotence
+    - cleanup
+    - destroy
+
+Для выполнения deploy in docker используется collections community.docker
+```yml
+---
+collections:
+  - name: community.docker
+    version: ">=3.10.4"
+```
+
+В файле molecule.yml выполнено переопределение path role  
+```ini
+roles_path: /<путь до размещения директории с ролью или ролями где находиться Vector>/
+```
+
+Tox
+-------
+Выполнение тестирования запуска Molecule в разных версия виртуального окружения.
+Тестирование производилось в окружении python3.12, выполнение molecule test на версии ansible-core 2.20.5 и минимальной версии 2.17.0.
+
+Перед запуском тестирования через Tox измените, при необходимости, параметры в tox.ini переменных для передачи в переменное окружение при создании виртуального окружения
+```ini
+setenv =
+    CLICKHOUSE_USER = admin
+    CLICKHOUSE_PASSWORD = admin
+```
+Также,чтобы при проверки валидации конфигурационного файла Vector, валидация не ушла в ошибку, должен быть предварительно подготовленный clickhouse-server с возможностью авторизации, можно использовать готовый официальный docker образ "clickhouse/clickhouse-server:latest".
+```bash
+ docker run --rm -d -it -e CLICKHOUSE_USER=admin -e CLICKHOUSE_PASSWORD=admin -p 8127:8123 clickhouse/clickhouse-server:latest
+```
+При использовании docker образа необходимо указать port forward, например ```-p 8127:8123 ``` и изменить порт по умолчанию в переменной ```vector_clickhouse_http_port``` на порт через который происходит транспорт до clickhouse-server. 
+Для определения IP адреса clickhouse-server для конфигурационного файла, необходимо в defaults/main.yml (переменные по умолчанию) прописать адрес сервера 
+```yml
+vector_clickhouse_http_host: "<IP clickhouse-server>"
+```
 
 License
 -------

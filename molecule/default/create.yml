@@ -17,6 +17,7 @@
         tty: true
         detach: true
         state: started
+        env: "{{ item.env | default({}) }}"
         log_driver: json-file
       register: result
       loop: "{{ molecule_yml.platforms }}"

@@ -47,7 +47,7 @@
         dest: "{{ vector_conf_dest }}"
         mode: "{{ vector_template_mode }}"
       notify: Start vector
-      
+
     - name: Flush handlers
       ansible.builtin.meta: flush_handlers
 
