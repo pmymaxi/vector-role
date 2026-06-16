@@ -7,10 +7,21 @@ dependency:
 platforms:
   - name: molecule-netology
     image: rockylinux:9
+    env:
+      CLICKHOUSE_USER: admin
+      CLICKHOUSE_PASSWORD: admin
+
   - name: molecule-oracle
     image: oraclelinux:9
+    env:
+      CLICKHOUSE_USER: admin
+      CLICKHOUSE_PASSWORD: admin
+
   - name: molecule-ubuntu
     image: ubuntu:latest
+    env:
+      CLICKHOUSE_USER: admin
+      CLICKHOUSE_PASSWORD: admin
 
 ansible:
   cfg:

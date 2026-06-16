@@ -14,8 +14,12 @@
         - /usr/bin/vector
         - /etc/vector/vector.yaml
       register: vector_bin
+      
     - name: Validate config
       ansible.builtin.command: vector validate /etc/vector/vector.yaml
+      environment: "{{ item.env | default({}) }}"
+      loop: "{{ molecule_yml.platforms }}"
+      when: item.name == inventory_hostname
       register: vector_validate
 
     - name: Debug validate vector
