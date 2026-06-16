@@ -1,0 +1,32 @@
+---
+# Purpose: assert that the instance really ended up in the expected state.
+# Molecule calls this playbook with `molecule verify`.
+- name: Verify
+  hosts: molecule
+  gather_facts: false  # Quicker, if you do not need facts
+  vars:
+    debug_enabled: false
+  tasks:
+    - name: Check vector binary exists
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /usr/bin/vector
+        - /etc/vector/vector.yaml
+      register: vector_bin
+    - name: Validate config
+      ansible.builtin.command: vector validate /etc/vector/vector.yaml
+      register: vector_validate
+
+    - name: Debug validate vector
+      ansible.builtin.debug:
+        msg:
+          - "{{ vector_bin }}"
+          - "{{ vector_validate }}"
+      when: debug_enabled | bool
+
+    - name: Assert path
+      ansible.builtin.assert:
+        that:
+          - vector_bin.results[0].stat.exists
+          - vector_validate.rc == 0

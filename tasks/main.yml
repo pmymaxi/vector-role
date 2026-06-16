@@ -1,21 +1,44 @@
 ---
 - name: Block vector deploy
   block:
-    - name: Get repo vector
+    - name: Get repo vector rpm
       tags:
         - vectoraddrepo
       ansible.builtin.get_url:
         url: "{{ vector_repo_url }}.{{ vector_repo_arch }}.rpm"
-        dest: "{{ vector_repo_dest }}"
+        dest: "{{ vector_repo_dest }}.rpm"
         mode: "{{ vector_dir_mod }}"
         timeout: "{{ vector_timeout }}"
-    - name: Install vector
+      when: ansible_facts['os_family'] == 'RedHat'
+
+    - name: Get repo vector deb
+      tags:
+        - vectoraddrepo
+      ansible.builtin.get_url:
+        url: "{{ vector_repo_url_deb }}_{{ vector_repo_deb }}.deb"
+        dest: "{{ vector_repo_dest }}.deb"
+        mode: "{{ vector_dir_mod }}"
+        timeout: "{{ vector_timeout }}"
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Install vector dnf
       tags:
         - vectorinstall
       ansible.builtin.dnf:
-        name: "{{ vector_dnf_repo_name }}"
+        name: "{{ vector_repo_dest }}.rpm"
         state: "{{ vector_dnf_state }}"
         disable_gpg_check: "{{ vector_dnf_gpg_check }}"
+      when: ansible_facts['pkg_mgr'] == 'dnf'
+
+    - name: Install vector apt
+      tags:
+        - vectorinstall
+      ansible.builtin.apt:
+        deb: "{{ vector_repo_dest }}.deb"
+        state: "{{ vector_dnf_state }}"
+        update_cache: true
+      when: ansible_facts['pkg_mgr'] == 'apt'
+
     - name: Past templates vector
       tags:
         - vectorsetconf
@@ -24,6 +47,10 @@
         dest: "{{ vector_conf_dest }}"
         mode: "{{ vector_template_mode }}"
       notify: Start vector
+      
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
     - name: Wait access port clickhouse
       tags:
         - checkconnectdb
@@ -32,3 +59,4 @@
         host: "{{ vector_clickhouse_http_host }}"
         delay: "{{ vector_clickhouse_http_delay }}"
         timeout: "{{ vector_clickhouse_http_timeout }}"
+      when: vector_check_service | bool

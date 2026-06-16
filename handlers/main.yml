@@ -1,6 +1,25 @@
 ---
-- name: Start vector
+- name: Start vector by systemd
   ansible.builtin.service:
     name: vector
     state: restarted
     enabled: true
+  when: vector_start_systemd
+  listen: Start vector
+
+- name: Status active vector
+  ansible.builtin.command: pidof vector
+  register: status_vector
+  listen: Start vector
+  failed_when: false
+  changed_when: false
+
+- name: Start manual vector
+  ansible.builtin.shell: >  
+    vector --config "{{ vector_conf_dest }}"
+    >/var/log/vector.log 2>&1 < /dev/null &
+  register: ckeck_start_nginx
+  when: not vector_start_systemd
+  listen: Start vector
+  failed_when: false
+  changed_when: status_vector.rc != 0

@@ -1,0 +1,25 @@
+---
+- name: Prepare
+  gather_facts: false
+  hosts: all
+  vars:
+    debug_enabled: false
+  tasks:
+    - name: Check if Python3 exists
+      ansible.builtin.raw: python3 --version
+      register: python_check
+      changed_when: false
+      failed_when: false
+
+    - name: Prepare debug check is python3
+      ansible.builtin.debug:
+        var: python_check
+      when: debug_enabled | bool
+
+    - name: Install or update python3 for ubuntu:latest
+      ansible.builtin.raw: |
+        apt-get update
+        DEBIAN_FRONTEND=noninteractive apt-get install -y python3
+      when: python_check.rc != 0
+      changed_when: false
+      failed_when: false

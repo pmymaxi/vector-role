@@ -1,8 +1,10 @@
 [vector]
-vector-01 ansible_host=127.0.0.1
+vector-01 ansible_host=localhost
+[local]
+localhost ansible_connection=local
 
 [vector:vars]
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-ansible_user=user
+ansible_user=dops
 ansible_port=22
-ansible_ssh_private_key_file=path_to_ssh_key_pub
+ansible_ssh_private_key_file=/home/dops/.ssh/id_ed25519

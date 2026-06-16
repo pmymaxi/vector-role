@@ -1,6 +1,6 @@
 ---
-- hosts: vector
-  remote_user: user
+- hosts: local
+  remote_user: dops
   become: true
   roles:
     - vector

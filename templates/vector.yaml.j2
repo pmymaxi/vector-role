@@ -3,7 +3,6 @@ sources:
     type: file
     include:
       - "{{ vector_include_logs }}"
-    read_from: end
 
 sinks:
   clickhouse:
@@ -14,3 +13,7 @@ sinks:
     database: "{{ vector_clickhouse_db_name }}"
     table: "{{ vector_clickhouse_table_name }}"
     skip_unknown_fields: true
+    auth:
+      strategy: basic
+      user: ${CLICKHOUSE_USER}
+      password: ${CLICKHOUSE_PASSWORD}

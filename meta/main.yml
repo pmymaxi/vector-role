@@ -1,7 +1,10 @@
+---
 galaxy_info:
   author: Max Maxi
   description: This role is set by vector
   company: dops
+  role_name: vector
+  namespace: dops
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -18,9 +21,6 @@ galaxy_info:
 
   min_ansible_version: "2.20"
 
-  # If this a Container Enabled role, provide the minimum Ansible Container version.
-  # min_ansible_container_version:
-
   platforms:
     - name: Rocky
       versions:
@@ -33,6 +33,9 @@ galaxy_info:
       versions:
         - "9"
         - "10"
+    - name: Ubuntu
+      version:
+        - "24.04.1"
 
   galaxy_tags:
     - vectorsetconf
@@ -40,5 +43,4 @@ galaxy_info:
     - vectoraddrepo
     - vectorinstall
 
-dependencies:
-  - clickhouse
+dependencies: []
