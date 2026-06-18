@@ -26,12 +26,12 @@ platforms:
 ansible:
   cfg:
     defaults:
-      roles_path: /home/dops/Yandex.Disk/repo/dops-hw/ansible/hw-ansi-04/roles/
       host_key_checking: false
       verbosity: 1
     ssh_connection:
       pipelining: true
   env:
+    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/../:${HOME}/.ansible/roles"
     ANSIBLE_FORCE_COLOR: "1"
     ANSIBLE_LOAD_CALLBACK_PLUGINS: "1"
 

@@ -1,6 +1,6 @@
 ---
 - name: Destroy molecule containers
-  hosts: molecule
+  hosts: vector
   gather_facts: false
   tasks:
     - name: Stop and remove container

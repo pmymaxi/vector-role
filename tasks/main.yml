@@ -48,9 +48,6 @@
         mode: "{{ vector_template_mode }}"
       notify: Start vector
 
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
-
     - name: Wait access port clickhouse
       tags:
         - checkconnectdb
@@ -59,4 +56,4 @@
         host: "{{ vector_clickhouse_http_host }}"
         delay: "{{ vector_clickhouse_http_delay }}"
         timeout: "{{ vector_clickhouse_http_timeout }}"
-      when: vector_check_service | bool
+      when: vector_check_service

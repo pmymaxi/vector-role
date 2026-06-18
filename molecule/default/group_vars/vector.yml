@@ -1,0 +1,18 @@
+---
+vector_repo_url: "https://packages.timber.io/vector/0.55.0/vector-0.55.0-1"
+vector_repo_arch: "x86_64"
+
+vector_include_logs: "/var/log/nginx/my_access.log"
+
+vector_conf_dest: "/etc/vector/vector.yaml"
+
+vector_clickhouse_http_host: "172.17.0.3"
+vector_clickhouse_http_port: "8123"
+vector_clickhouse_http_delay: 2
+vector_clickhouse_http_timeout: 30
+
+vector_clickhouse_db_name: "nginx"
+vector_clickhouse_table_name: "my_access_logs"
+
+vector_start_systemd: false
+vector_check_service: true

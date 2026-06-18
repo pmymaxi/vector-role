@@ -2,7 +2,7 @@
 # Purpose: assert that the instance really ended up in the expected state.
 # Molecule calls this playbook with `molecule verify`.
 - name: Verify
-  hosts: molecule
+  hosts: vector
   gather_facts: false  # Quicker, if you do not need facts
   vars:
     debug_enabled: false
@@ -14,12 +14,9 @@
         - /usr/bin/vector
         - /etc/vector/vector.yaml
       register: vector_bin
-      
+
     - name: Validate config
       ansible.builtin.command: vector validate /etc/vector/vector.yaml
-      environment: "{{ item.env | default({}) }}"
-      loop: "{{ molecule_yml.platforms }}"
-      when: item.name == inventory_hostname
       register: vector_validate
 
     - name: Debug validate vector
@@ -27,7 +24,7 @@
         msg:
           - "{{ vector_bin }}"
           - "{{ vector_validate }}"
-      when: debug_enabled | bool
+      when: debug_enabled
 
     - name: Assert path
       ansible.builtin.assert:

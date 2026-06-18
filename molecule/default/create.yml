@@ -5,8 +5,6 @@
   vars:
     molecule_inventory:
       all:
-        hosts: {}
-        molecule: {}
     debug_enabled: false
   tasks:
     - name: Create a container
@@ -42,7 +40,7 @@
         inventory_partial_yaml: |
           all:
             children:
-              molecule:
+              vector:
                 hosts:
                   "{{ item.name }}":
                     ansible_connection: community.docker.docker
@@ -63,11 +61,11 @@
     - name: Force inventory refresh
       ansible.builtin.meta: refresh_inventory
 
-    - name: Fail if molecule group is missing
+    - name: Fail if vector group is missing
       ansible.builtin.assert:
-        that: "'molecule' in groups"
+        that: "'vector' in groups"
         fail_msg: |
-          molecule group was not found inside inventory groups: {{ groups }}
+          vector group was not found inside inventory groups: {{ groups }}
       run_once: true  # noqa: run-once[task]
 
 # we want to avoid errors like "Failed to create temporary directory"

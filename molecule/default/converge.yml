@@ -2,7 +2,7 @@
 # Purpose: bring the instance to the desired state by running the role under test.
 # Molecule calls this playbook with `molecule converge`.
 - name: Converge
-  hosts: molecule
+  hosts: vector
   gather_facts: true  # Disable if your role does not rely on facts
   tasks:
     - name: Show service manager
@@ -12,7 +12,3 @@
     - name: Apply role under test
       ansible.builtin.include_role:
         name: vector
-      vars:
-        vector_start_systemd: false
-        vector_check_service: false
-        vector_clickhouse_http_host: "192.168.1.202"
