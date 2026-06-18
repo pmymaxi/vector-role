@@ -122,7 +122,9 @@ docker inspect <ID_container>  --format '{{json .NetworkSettings.Networks}}' | j
 7. Запускаем role тестирование полного сценария molecule
 ```bash
 molecule test
-```  
+```
+<img width="1483" height="2156" alt="изображение" src="https://github.com/user-attachments/assets/28a996a5-a1ed-4b3d-9711-4135801937fb" />
+
 Tox
 -------
 Выполнение тестирования запуска Molecule в разных версия виртуального окружения.
@@ -143,6 +145,15 @@ setenv =
 ```yml
 vector_clickhouse_http_host: "<IP clickhouse-server>"
 ```
+
+Tox пример тестирования
+-------
+```bash
+tox run
+```
+
+<img width="1113" height="2238" alt="Tox" src="https://github.com/user-attachments/assets/af14687c-8518-489e-9a60-2b03b6827992" />
+
 
 License
 -------
