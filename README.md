@@ -90,6 +90,31 @@ collections:
 roles_path: /<путь до размещения директории с ролью или ролями где находиться Vector>/
 ```
 
+Molecule пример тестирования
+-------
+1. Добавляем авторизационные данные для clickhouse в переменное окружение (можно не добавлять, а указать их в момент передачи env в контенер)
+```bash
+export CLICKHOUSE_USER="admin" && export CLICKHOUSE_PASSWORD="admin"
+```
+2. Поднимаем docker container clickhouse с дополнительными аргументами env и port forward
+   ```bash
+   docker run --rm -d -it -e CLICKHOUSE_USER="$CLICKHOUSE_USER" -e CLICKHOUSE_PASSWORD="$CLICKHOUSE_PASSWORD" -p 8127:8123 -p 9001:9000 clickhouse/clickhouse-server:latest
+   ```
+3. Проверяем доступность clickhose по протоколу http на порт 8127 -> 8123
+```bash
+ curl 127.0.0.1:8127
+```
+4. Пробуем подключится к native clickhouse на порт 9001 -> 9000 (clickhouse-client должен предварительно установлен на control node)
+```bash
+clickhouse-client --host 127.0.0.1 --port 9001 --user admin --password admin
+```
+5. Получим информацию об IP container clickhouse в docker networ bridge.
+```bash
+docker inspect <ID_container>  --format '{{json .NetworkSettings.Networks}}' | jq
+```
+
+<img width="1833" height="1223" alt="Vector" src="https://github.com/user-attachments/assets/7357ccc2-4212-4ec5-a7cc-30f5d25a2683" />
+
 Tox
 -------
 Выполнение тестирования запуска Molecule в разных версия виртуального окружения.
