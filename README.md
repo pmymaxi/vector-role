@@ -115,6 +115,14 @@ docker inspect <ID_container>  --format '{{json .NetworkSettings.Networks}}' | j
 
 <img width="1833" height="1223" alt="Vector" src="https://github.com/user-attachments/assets/7357ccc2-4212-4ec5-a7cc-30f5d25a2683" />
 
+6. В /molecule/default/group_vars/vector.yml меняем значение переменной ```vector_clickhouse_http_host: "172.17.0.3"``` на IP адрес сclickhouse-server, полученного при фильтрации inspect контенера clickhouse
+
+<img width="627" height="393" alt="изображение" src="https://github.com/user-attachments/assets/08f336ba-111a-493a-99c7-4ae93697109f" />
+
+7. Запускаем role тестирование полного сценария molecule
+```bash
+molecule test
+```  
 Tox
 -------
 Выполнение тестирования запуска Molecule в разных версия виртуального окружения.
